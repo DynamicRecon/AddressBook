@@ -6,6 +6,6 @@
    Uses SQLLite for database.
 
 ## Requirements
-  wxWidgets >= 3.0
-  SQLLite3
+ * wxWidgets >= 3.0
+ * SQLLite3
 
