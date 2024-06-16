@@ -37,6 +37,8 @@ build/*
 #emacs ignore
 *.cpp~
 *.hpp~
+*.md~
+*.cmake~
 \#*\#
 /.emacs.desktop
 /.emacs.desktop.lock
