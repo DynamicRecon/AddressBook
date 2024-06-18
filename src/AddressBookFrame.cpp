@@ -64,7 +64,24 @@ AddressBookFrame::AddressBookFrame(const wxString& title)
   m_btn_delete = new wxButton(form_panel, DELETE, _("Delete"));
   m_main_sizer->Add(m_btn_update, 0, wxALL|wxEXPAND);
   m_main_sizer->Add(m_btn_delete, 0, wxALL|wxEXPAND);
- 
+  
+  wxOutputStream inis;
+  m_ini_file = new wxFileConfig(_("AddressBook"), wxEmptyString, _("settings.ini"));
+  m_ini_file->SetPath("/AddressBook");
+  m_db_path = m_ini_file->Read("DBPATH", wxEmptyString);
+  
+  //if ini_file doesn't return path.
+  if(m_db_path == wxEmptyString)
+  {
+    wxFileDialog saveDatabase(this, _("New Contacts Database"), "", "", 
+    "DB Files (*.db)|*.db",  wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
+    if(saveDatabase.ShowModal() == wxID_OK)
+    {
+      m_db_path = saveDatabase.GetPath();
+    }
+    m_ini_file->Write("DBPATH", m_db_path);
+    m_ini_file->Save(inis);
+  } 
   form_panel->SetSizerAndFit(m_main_sizer);
   
   Layout();
@@ -86,16 +103,6 @@ void AddressBookFrame::Clear()
 
 void AddressBookFrame::OnAdd(wxCommandEvent& event) 
 {
-  
-  if(m_db_path == wxEmptyString)
-  {
-    wxFileDialog saveDatabase(this, _("New Contacts Database"), "", "", 
-    "DB Files (*.db)|*.db",  wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
-    if(saveDatabase.ShowModal() == wxID_OK)
-    {
-      m_db_path = saveDatabase.GetPath();
-    }
-  }
   
   ContactInfo info(m_db_path.ToStdString());
   info.set_name(m_txt_name->GetValue().ToStdString());

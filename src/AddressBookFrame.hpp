@@ -43,6 +43,8 @@ private:
   wxStaticText *m_lbl_email;
   wxTextCtrl *m_txt_email;
   
+  wxFileConfig *m_ini_file;
+
   wxButton *m_btn_add;
   wxButton *m_btn_update;
   wxButton *m_btn_delete;
