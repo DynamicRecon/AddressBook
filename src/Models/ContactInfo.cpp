@@ -1,6 +1,12 @@
 #include "ContactInfo.hpp"
 
-ContactInfo::ContactInfo() {}
+ContactInfo::ContactInfo() 
+{}
+
+ContactInfo::ContactInfo(std::string db_path) 
+{ 
+  m_db_path = db_path; 
+}
 
 void ContactInfo::set_contact_id(int val)
 {
@@ -22,12 +28,12 @@ std::string ContactInfo::get_name()
   return m_name;
 }
 
-void ContactInfo::set_phone_number(long int val)
+void ContactInfo::set_phone_number(std::string val)
 {
   m_phone_number = val;
 }
 
-long int ContactInfo::get_phone_number()
+std::string ContactInfo::get_phone_number()
 {
   return m_phone_number;
 }
@@ -40,4 +46,31 @@ void ContactInfo::set_email(std::string val)
 std::string ContactInfo::get_email()
 {
   return m_email;
+}
+
+void ContactInfo::Add()
+{
+  DataLayer add_dl(m_db_path);
+  char name[100];
+  strcpy(name, m_name.c_str());
+  char email[500]; 
+  strcpy(email, m_email.c_str());
+  char phone[500];
+  strcpy(phone, m_phone_number.c_str());
+  add_dl.insert_contact_info(name, email, phone);
+}
+
+void ContactInfo::Update()
+{
+
+}
+
+void ContactInfo::Delete()
+{
+
+}
+
+void ContactInfo::Search()
+{
+
 }

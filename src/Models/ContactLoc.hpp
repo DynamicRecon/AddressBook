@@ -6,6 +6,7 @@
 class ContactLoc {
 public:
   ContactLoc();
+  ContactLoc(std::string db_path);
   void set_location_id(int val);
   int get_location_id();
   void set_contact_id(int val);
@@ -18,7 +19,12 @@ public:
   std::string get_state();
   void set_zip(std::string val);
   std::string get_zip();
+  void Add();
+  void Update();
+  void Delete();
+  void Search();
 private:
+  std::string m_db_path;
   int m_location_id;
   int m_contact_id;
   std::string m_address;

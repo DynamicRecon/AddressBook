@@ -1,8 +1,12 @@
 #include "ContactLoc.hpp"
 
-
-ContactLoc::ContactLoc()
+ContactLoc::ContactLoc() 
 {}
+
+ContactLoc::ContactLoc(std::string db_path) 
+{ 
+  m_db_path = db_path; 
+}
 
 void ContactLoc::set_location_id(int val)
 {
@@ -62,4 +66,24 @@ void ContactLoc::set_zip(std::string val)
 std::string ContactLoc::get_zip()
 {
   return m_zip;
+}
+
+void ContactLoc::Add()
+{
+
+}
+
+void ContactLoc::Update()
+{
+
+}
+
+void ContactLoc::Delete()
+{
+
+}
+
+void ContactLoc::Search()
+{
+
 }

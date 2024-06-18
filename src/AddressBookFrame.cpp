@@ -65,15 +65,7 @@ AddressBookFrame::AddressBookFrame(const wxString& title)
   m_main_sizer->Add(m_btn_update, 0, wxALL|wxEXPAND);
   m_main_sizer->Add(m_btn_delete, 0, wxALL|wxEXPAND);
 
-  DataLayer dl_settings;
-  dl_settings.create_db_settings("Settings.db");
-  if(dl_settings.is_opened() == false)
-  {
-    wxString error_msg(dl_settings.get_errors());
-    wxMessageDialog msg(this, error_msg, _("Error!"));
-    if(msg.ShowModal() == wxID_OK)
-      return;
-  }
+  
   // if(dl_settings.get_errors() != "")
   //  std::cout << dl_settings.get_errors() << std::endl;
  
@@ -87,33 +79,71 @@ AddressBookFrame::AddressBookFrame(const wxString& title)
 
 void AddressBookFrame::OnAdd(wxCommandEvent& event) 
 {
-  Settings app_settings;
-  DataLayer dl_settings_db("Settings.db");
-  app_settings.set_name("PATH");
-  dl_settings_db.get_setting(&app_settings);
   
-  if(app_settings.get_value() == "")
+  if(m_db_path == wxEmptyString)
   {
     wxFileDialog saveDatabase(this, _("New Contacts Database"), "", "", 
     "DB Files (*.db)|*.db",  wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
     if(saveDatabase.ShowModal() == wxID_OK)
     {
-      app_settings.set_value(saveDatabase.GetPath().ToStdString());
+      m_db_path = saveDatabase.GetPath();
     }
-    dl_settings_db.insert_setting(app_settings);
   }
-  dl_settings_db.create_db_contacts(app_settings.get_value());
+  
+  ContactInfo info(m_db_path.ToStdString());
+  info.set_name(m_txt_name->GetValue().ToStdString());
+  info.set_email(m_txt_email->GetValue().ToStdString());
+  info.set_phone_number(m_txt_phone->GetValue().ToStdString());  
+  info.Add();
+
+  ContactLoc loc(m_db_path.ToStdString());
+  loc.set_contact_id(info.get_contact_id());
+  loc.set_address(m_txt_address->GetValue().ToStdString());
+  loc.set_city(m_txt_city->GetValue().ToStdString());
+  loc.set_state(m_txt_state->GetValue().ToStdString());
+  loc.set_zip(m_txt_zip->GetValue().ToStdString());
+  loc.Add();
 
 }
 
 void AddressBookFrame::OnUpdate(wxCommandEvent& event) 
-{}
+{
+  ContactInfo info(m_db_path.ToStdString());
+  info.set_name(m_txt_name->GetValue().ToStdString());
+  info.set_email(m_txt_email->GetValue().ToStdString());
+  info.set_phone_number(m_txt_phone->GetValue().ToStdString());  
+  info.Update();
+
+  ContactLoc loc(m_db_path.ToStdString());
+  loc.set_contact_id(info.get_contact_id());
+  loc.set_address(m_txt_address->GetValue().ToStdString());
+  loc.set_city(m_txt_city->GetValue().ToStdString());
+  loc.set_state(m_txt_state->GetValue().ToStdString());
+  loc.set_zip(m_txt_zip->GetValue().ToStdString());
+  loc.Update();
+}
 
 void AddressBookFrame::OnDelete(wxCommandEvent& event) 
-{}
+{
+  ContactInfo info(m_db_path.ToStdString());
+  info.set_name(m_txt_name->GetValue().ToStdString());  
+  info.Delete();
+
+  ContactLoc loc(m_db_path.ToStdString());
+  loc.set_contact_id(info.get_contact_id());
+  loc.Delete();
+}
 
 void AddressBookFrame::OnSearch(wxCommandEvent& event) 
-{}
+{
+  ContactInfo info(m_db_path.ToStdString());
+  info.set_name(m_txt_name->GetValue().ToStdString());  
+  info.Search();
+
+  ContactLoc loc(m_db_path.ToStdString());
+  loc.set_contact_id(info.get_contact_id());
+  loc.Search();
+}
 
 wxBEGIN_EVENT_TABLE(AddressBookFrame, wxFrame)
   EVT_BUTTON(ADD, AddressBookFrame::OnAdd)

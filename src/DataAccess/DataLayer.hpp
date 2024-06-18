@@ -7,10 +7,6 @@
 #include<string>
 #include <sqlite3.h>
 
-#include "Models/ContactInfo.hpp"
-#include "Models/ContactLoc.hpp"
-#include "Models/Settings.hpp"
-
 class DataLayer
 {
 public:
@@ -20,15 +16,14 @@ public:
   bool is_opened();
   std::string get_errors();
   void create_db_contacts(std::string contacts_path);
-  void create_db_settings(std::string settings_path);
-  void insert_setting(Settings set);
-  void insert_contact(ContactInfo info, ContactLoc loc);
-  void update_setting(Settings set);
-  void update_contact(ContactInfo info, ContactLoc loc);
-  void delete_setting(Settings set);
-  void delete_contact(ContactInfo info, ContactLoc loc);
-  void get_setting(Settings *set);
-  void search_contact(ContactInfo *info, ContactLoc *loc);
+  void insert_contact_info(char *name, char* email, char *phonenum);
+  void insert_contact_loc(int contact_id, char *address, char *city, char *state, char *zip);
+  void update_contact_info(char *name, char* email, char *phonenum);
+  void update_contact_loc(int contact_id, char *address, char *city, char *state, char *zip);
+  void delete_contact_info(char *name);
+  void delete_contact_loc(int contact_id);
+  void search_contact_info(char *name);
+  void search_contact_loc(int contact_id);
 private:
   std::string m_path;
   std::string m_settings_path;

@@ -10,8 +10,8 @@
 #include <wx/grid.h>
 #include <wx/msgdlg.h>
 
-#include "Models/Settings.hpp"
-#include "DataAccess/DataLayer.hpp"
+#include "Models/ContactInfo.hpp"
+#include "Models/ContactLoc.hpp"
 
 enum
 {
