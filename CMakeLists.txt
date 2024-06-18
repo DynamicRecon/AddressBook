@@ -5,6 +5,8 @@ set(wxBUILD_SHARED OFF)
 option(with-qt ON)
 
 set(SOURCES
+        src/Models/Settings.hpp
+        src/Models/Settings.cpp
         src/Models/ContactLoc.hpp
 	    src/Models/ContactLoc.cpp
 	    src/Models/ContactInfo.hpp

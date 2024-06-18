@@ -64,7 +64,18 @@ AddressBookFrame::AddressBookFrame(const wxString& title)
   m_btn_delete = new wxButton(form_panel, DELETE, _("Delete"));
   m_main_sizer->Add(m_btn_update, 0, wxALL|wxEXPAND);
   m_main_sizer->Add(m_btn_delete, 0, wxALL|wxEXPAND);
-  
+
+  DataLayer dl_settings;
+  dl_settings.create_db_settings("Settings.db");
+  if(dl_settings.is_opened() == false)
+  {
+    wxString error_msg(dl_settings.get_errors());
+    wxMessageDialog msg(this, error_msg, _("Error!"));
+    if(msg.ShowModal() == wxID_OK)
+      return;
+  }
+  // if(dl_settings.get_errors() != "")
+  //  std::cout << dl_settings.get_errors() << std::endl;
  
   form_panel->SetSizerAndFit(m_main_sizer);
   
@@ -74,10 +85,35 @@ AddressBookFrame::AddressBookFrame(const wxString& title)
 
 //private methods
 
-void AddressBookFrame::OnAdd(wxCommandEvent& event) {}
-void AddressBookFrame::OnUpdate(wxCommandEvent& event) {}
-void AddressBookFrame::OnDelete(wxCommandEvent& event) {}
-void AddressBookFrame::OnSearch(wxCommandEvent& event) {}
+void AddressBookFrame::OnAdd(wxCommandEvent& event) 
+{
+  Settings app_settings;
+  DataLayer dl_settings_db("Settings.db");
+  app_settings.set_name("PATH");
+  dl_settings_db.get_setting(&app_settings);
+  
+  if(app_settings.get_value() == "")
+  {
+    wxFileDialog saveDatabase(this, _("New Contacts Database"), "", "", 
+    "DB Files (*.db)|*.db",  wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
+    if(saveDatabase.ShowModal() == wxID_OK)
+    {
+      app_settings.set_value(saveDatabase.GetPath().ToStdString());
+    }
+    dl_settings_db.insert_setting(app_settings);
+  }
+  dl_settings_db.create_db_contacts(app_settings.get_value());
+
+}
+
+void AddressBookFrame::OnUpdate(wxCommandEvent& event) 
+{}
+
+void AddressBookFrame::OnDelete(wxCommandEvent& event) 
+{}
+
+void AddressBookFrame::OnSearch(wxCommandEvent& event) 
+{}
 
 wxBEGIN_EVENT_TABLE(AddressBookFrame, wxFrame)
   EVT_BUTTON(ADD, AddressBookFrame::OnAdd)

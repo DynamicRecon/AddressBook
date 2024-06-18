@@ -1,11 +1,17 @@
 #ifndef ADDRESSBOOKFRAME_HPP
 #define ADDRESSBOOKFRAME_HPP
 
+#include<iostream>
+
 #include <wx/wx.h>
+#include <wx/fileconf.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
 #include <wx/grid.h>
+#include <wx/msgdlg.h>
 
+#include "Models/Settings.hpp"
+#include "DataAccess/DataLayer.hpp"
 
 enum
 {
@@ -41,6 +47,8 @@ private:
   wxButton *m_btn_update;
   wxButton *m_btn_delete;
   wxButton *m_btn_search;
+
+  wxString m_db_path;
   void OnAdd(wxCommandEvent& event);
   void OnUpdate(wxCommandEvent& event);
   void OnDelete(wxCommandEvent& event);
