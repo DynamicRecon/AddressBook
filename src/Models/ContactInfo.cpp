@@ -57,7 +57,7 @@ void ContactInfo::Add()
   strcpy(email, m_email.c_str());
   char phone[500];
   strcpy(phone, m_phone_number.c_str());
-  add_dl.insert_contact_info(name, email, phone);
+  m_contact_id = add_dl.insert_contact_info(name, email, phone);
 }
 
 void ContactInfo::Update()

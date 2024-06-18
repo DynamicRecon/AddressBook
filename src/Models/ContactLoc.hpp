@@ -3,6 +3,8 @@
 
 #include<string>
 
+#include "DataAccess/DataLayer.hpp"
+
 class ContactLoc {
 public:
   ContactLoc();

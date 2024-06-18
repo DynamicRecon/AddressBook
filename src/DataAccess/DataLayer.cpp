@@ -89,10 +89,10 @@ void DataLayer::create_db_contacts(std::string contacts_path)
 
 
 
-void DataLayer::insert_contact_info(char *name, char* email, char *phonenum)
+int DataLayer::insert_contact_info(char *name, char* email, char *phonenum)
 {
   
-
+  
 }
 
 void DataLayer::insert_contact_loc(int contact_id, char *address, char *city, char *state, char *zip)

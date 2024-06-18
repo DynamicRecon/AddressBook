@@ -49,6 +49,7 @@ private:
   wxButton *m_btn_search;
 
   wxString m_db_path;
+  void Clear();
   void OnAdd(wxCommandEvent& event);
   void OnUpdate(wxCommandEvent& event);
   void OnDelete(wxCommandEvent& event);

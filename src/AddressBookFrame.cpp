@@ -64,10 +64,6 @@ AddressBookFrame::AddressBookFrame(const wxString& title)
   m_btn_delete = new wxButton(form_panel, DELETE, _("Delete"));
   m_main_sizer->Add(m_btn_update, 0, wxALL|wxEXPAND);
   m_main_sizer->Add(m_btn_delete, 0, wxALL|wxEXPAND);
-
-  
-  // if(dl_settings.get_errors() != "")
-  //  std::cout << dl_settings.get_errors() << std::endl;
  
   form_panel->SetSizerAndFit(m_main_sizer);
   
@@ -76,6 +72,17 @@ AddressBookFrame::AddressBookFrame(const wxString& title)
 
 
 //private methods
+
+void AddressBookFrame::Clear()
+{
+  m_txt_name->Clear();
+  m_txt_email->Clear();
+  m_txt_phone->Clear();
+  m_txt_address->Clear();
+  m_txt_city->Clear();
+  m_txt_state->Clear();
+  m_txt_zip->Clear();
+}
 
 void AddressBookFrame::OnAdd(wxCommandEvent& event) 
 {
@@ -103,7 +110,8 @@ void AddressBookFrame::OnAdd(wxCommandEvent& event)
   loc.set_state(m_txt_state->GetValue().ToStdString());
   loc.set_zip(m_txt_zip->GetValue().ToStdString());
   loc.Add();
-
+  
+   Clear();
 }
 
 void AddressBookFrame::OnUpdate(wxCommandEvent& event) 
@@ -121,6 +129,8 @@ void AddressBookFrame::OnUpdate(wxCommandEvent& event)
   loc.set_state(m_txt_state->GetValue().ToStdString());
   loc.set_zip(m_txt_zip->GetValue().ToStdString());
   loc.Update();
+
+  Clear();
 }
 
 void AddressBookFrame::OnDelete(wxCommandEvent& event) 
@@ -132,6 +142,8 @@ void AddressBookFrame::OnDelete(wxCommandEvent& event)
   ContactLoc loc(m_db_path.ToStdString());
   loc.set_contact_id(info.get_contact_id());
   loc.Delete();
+
+  Clear();
 }
 
 void AddressBookFrame::OnSearch(wxCommandEvent& event) 
@@ -143,6 +155,23 @@ void AddressBookFrame::OnSearch(wxCommandEvent& event)
   ContactLoc loc(m_db_path.ToStdString());
   loc.set_contact_id(info.get_contact_id());
   loc.Search();
+
+  if(info.get_contact_id() > 0)
+  {
+   wxString email(info.get_email());
+   m_txt_email->WriteText(email);
+   wxString phonenum(info.get_phone_number());
+   m_txt_phone->WriteText(phonenum);
+   wxString address(loc.get_address());
+   m_txt_address->WriteText(address);
+   wxString city(loc.get_city());
+   m_txt_city->WriteText(city);
+   wxString state(loc.get_state());
+   m_txt_state->WriteText(state);
+   wxString zip(loc.get_zip());
+   m_txt_zip->WriteText(zip);
+  }
+
 }
 
 wxBEGIN_EVENT_TABLE(AddressBookFrame, wxFrame)
