@@ -65,23 +65,33 @@ AddressBookFrame::AddressBookFrame(const wxString& title)
   m_main_sizer->Add(m_btn_update, 0, wxALL|wxEXPAND);
   m_main_sizer->Add(m_btn_delete, 0, wxALL|wxEXPAND);
   
-  wxOutputStream inis;
-  m_ini_file = new wxFileConfig(_("AddressBook"), wxEmptyString, _("settings.ini"));
-  m_ini_file->SetPath("/AddressBook");
-  m_db_path = m_ini_file->Read("DBPATH", wxEmptyString);
+  wxString str_path;
+  m_ini = new wxConfig(_("AddressBook"));
   
-  //if ini_file doesn't return path.
-  if(m_db_path == wxEmptyString)
+  if(m_ini->Read("/Settings/DBPATH", &str_path))
   {
-    wxFileDialog saveDatabase(this, _("New Contacts Database"), "", "", 
-    "DB Files (*.db)|*.db",  wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
-    if(saveDatabase.ShowModal() == wxID_OK)
+     m_db_path = str_path; //read in setting as member.
+  } else {
+    //if ini_file doesn't return path (prompt user for db location).
+    if(m_db_path == wxEmptyString)
     {
-      m_db_path = saveDatabase.GetPath();
+      wxFileDialog saveDatabase(this, _("New Contacts Database"), "", "", 
+      "DB Files (*.db)|*.db",  wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
+      if(saveDatabase.ShowModal() == wxID_OK)
+      {
+        m_db_path = saveDatabase.GetPath();
+      }
+      m_ini->Write("/Settings/DBPATH", m_db_path);
     }
-    m_ini_file->Write("DBPATH", m_db_path);
-    m_ini_file->Save(inis);
-  } 
+  }
+  //create database.
+  DataLayer m_dl_create(m_db_path.ToStdString());
+  m_dl_create.create_db_contacts();
+  delete m_ini;
+  
+  m_btn_update->Enable(false);
+  m_btn_delete->Enable(false);
+  
   form_panel->SetSizerAndFit(m_main_sizer);
   
   Layout();

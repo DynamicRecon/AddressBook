@@ -4,12 +4,14 @@
 #include<iostream>
 
 #include <wx/wx.h>
+#include <wx/config.h>
 #include <wx/fileconf.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
 #include <wx/grid.h>
 #include <wx/msgdlg.h>
 
+#include "DataAccess/DataLayer.hpp"
 #include "Models/ContactInfo.hpp"
 #include "Models/ContactLoc.hpp"
 
@@ -43,7 +45,7 @@ private:
   wxStaticText *m_lbl_email;
   wxTextCtrl *m_txt_email;
   
-  wxFileConfig *m_ini_file;
+  wxConfig *m_ini;
 
   wxButton *m_btn_add;
   wxButton *m_btn_update;

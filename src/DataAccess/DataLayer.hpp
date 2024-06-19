@@ -10,13 +10,13 @@
 class DataLayer
 {
 public:
-  DataLayer() {};
-  DataLayer(std::string settings_path);
+  DataLayer(std::string path) { m_path = path; };
   ~DataLayer();
   bool is_opened();
   std::string get_errors();
-  void create_db_contacts(std::string contacts_path);
-  int insert_contact_info(char *name, char* email, char *phonenum);
+  int get_last_row_id();
+  void create_db_contacts();
+  void insert_contact_info(char *name, char* email, char *phonenum);
   void insert_contact_loc(int contact_id, char *address, char *city, char *state, char *zip);
   void update_contact_info(char *name, char* email, char *phonenum);
   void update_contact_loc(int contact_id, char *address, char *city, char *state, char *zip);
@@ -26,7 +26,7 @@ public:
   void search_contact_loc(int contact_id);
 private:
   std::string m_path;
-  std::string m_settings_path;
+  int m_last_row_id;
   bool m_opened;
   int m_fail;
   sqlite3 *m_db;

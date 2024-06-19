@@ -80,6 +80,7 @@ void ContactLoc::Add()
   char zip[100];
   strcpy(zip, m_zip.c_str());
   add_dl.insert_contact_loc(m_contact_id, address, city, state, zip);
+  m_location_id = add_dl.get_last_row_id();
 }
 
 void ContactLoc::Update()

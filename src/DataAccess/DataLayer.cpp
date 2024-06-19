@@ -13,15 +13,16 @@ static int callback_create(void *NotUsed, int argc, char **argv, char **azColNam
 DataLayer::~DataLayer()
 {}
 
-DataLayer::DataLayer(std::string settings_path)
-{
-  m_settings_path = settings_path;
-}
-
 bool DataLayer::is_opened()
 {
   return m_opened;
 }
+
+int DataLayer::get_last_row_id()
+{
+  return m_last_row_id;
+}
+
 
 std::string DataLayer::get_errors()
 {
@@ -29,9 +30,8 @@ std::string DataLayer::get_errors()
   return error_msg;
 }
 
-void DataLayer::create_db_contacts(std::string contacts_path)
+void DataLayer::create_db_contacts()
 {
-  m_path = contacts_path;
   const char *sql;
 
   
@@ -63,7 +63,7 @@ void DataLayer::create_db_contacts(std::string contacts_path)
     "CITY TEXT, "\
     "STATE TEXT, "\
     "ZIP TEXT, "\
-    "FORIEGN KEY(CONTACT_ID) REFERENCES ContactInfo(ID));";
+    "FOREIGN KEY(CONTACT_ID) REFERENCES ContactInfo(ID));";
 
   m_fail = sqlite3_exec(m_db, sql, callback_create, 0, &m_ErrMsg);
   if(m_fail != SQLITE_OK)
@@ -89,15 +89,126 @@ void DataLayer::create_db_contacts(std::string contacts_path)
 
 
 
-int DataLayer::insert_contact_info(char *name, char* email, char *phonenum)
+void DataLayer::insert_contact_info(char *name, char* email, char *phonenum)
 {
+  sqlite3_stmt *stmt;
+  int id;
+  const char *sql = "INSERT INTO ContactInfo(NAME, EMAIL, PHONENUMBER) VALUES(?, ?, ?);";
+  m_fail = sqlite3_open(m_path.c_str(), &m_db);
+  m_opened = true;
+  if (m_fail)
+  {
+    m_opened = false;
+    return;
+  } 
   
+  m_fail = sqlite3_prepare_v2(m_db, sql, -1, &stmt, NULL);
+  if(m_fail != SQLITE_OK)
+  {
+    fprintf(stderr, "Error preparing insert: %s\n", sqlite3_errmsg(m_db));
+    return;
+  }
+
+  m_fail = sqlite3_bind_text(stmt, 1, name, strlen(name), NULL);
+  if(m_fail != SQLITE_OK)
+  {
+    fprintf(stderr, "Error binding name: %s\n", sqlite3_errmsg(m_db));
+    return;
+  }
   
+  m_fail = sqlite3_bind_text(stmt, 2, email, strlen(email), NULL);
+  if(m_fail != SQLITE_OK)
+  {
+    fprintf(stderr, "Error binding email: %s\n", sqlite3_errmsg(m_db));
+    return;
+  }
+
+  m_fail = sqlite3_bind_text(stmt, 3, phonenum, strlen(phonenum), NULL);
+  if(m_fail != SQLITE_OK)
+  {
+    fprintf(stderr, "Error binding phone number: %s\n", sqlite3_errmsg(m_db));
+    return;
+  }
+
+  m_fail = sqlite3_step(stmt);
+  if(m_fail != SQLITE_DONE)
+  {
+    fprintf(stderr, "Insert of contact information did not finish: %s\n", sqlite3_errmsg(m_db));
+    return;
+  }
+
+  m_last_row_id = sqlite3_last_insert_rowid(m_db);
+
+
+  sqlite3_finalize(stmt);  
+  sqlite3_close(m_db);
 }
 
 void DataLayer::insert_contact_loc(int contact_id, char *address, char *city, char *state, char *zip)
 {
+  sqlite3_stmt *stmt;
+  int id;
+  const char *sql = "INSERT INTO ContactLoc(CONTACT_ID, ADDRESS, CITY, STATE, ZIP) VALUES(?, ?, ?, ?, ?);";
+  m_fail = sqlite3_open(m_path.c_str(), &m_db);
+  m_opened = true;
+  if (m_fail)
+  {
+    m_opened = false;
+    return;
+  }
 
+  m_fail = sqlite3_prepare_v2(m_db, sql, -1, &stmt, NULL);
+  if(m_fail != SQLITE_OK)
+  {
+    fprintf(stderr, "Error preparing insert: %s\n", sqlite3_errmsg(m_db));
+    return;
+  } 
+
+  m_fail = sqlite3_bind_int(stmt, 1, contact_id);
+  if(m_fail != SQLITE_OK)
+  {
+    fprintf(stderr, "Error binding contact_id: %s\n", sqlite3_errmsg(m_db));
+    return;
+  }
+  
+  m_fail = sqlite3_bind_text(stmt, 2, address, strlen(address), NULL);
+  if(m_fail != SQLITE_OK)
+  {
+    fprintf(stderr, "Error binding address: %s\n", sqlite3_errmsg(m_db));
+    return;
+  }
+  
+  m_fail = sqlite3_bind_text(stmt, 3, city, strlen(city), NULL);
+  if(m_fail != SQLITE_OK)
+  {
+    fprintf(stderr, "Error binding city: %s\n", sqlite3_errmsg(m_db));
+    return;
+  }
+
+  m_fail = sqlite3_bind_text(stmt, 4, state, strlen(state), NULL);
+  if(m_fail != SQLITE_OK)
+  {
+    fprintf(stderr, "Error binding state: %s\n", sqlite3_errmsg(m_db));
+    return;
+  }
+
+  m_fail = sqlite3_bind_text(stmt, 5, zip, strlen(zip), NULL);
+  if(m_fail != SQLITE_OK)
+  {
+    fprintf(stderr, "Error binding zip: %s\n", sqlite3_errmsg(m_db));
+    return;
+  }
+
+  m_fail = sqlite3_step(stmt);
+  if(m_fail != SQLITE_DONE)
+  {
+    fprintf(stderr, "Insert of contact location did not finish: %s\n", sqlite3_errmsg(m_db));
+    return;
+  }
+  
+  m_last_row_id  = sqlite3_last_insert_rowid(m_db);
+  sqlite3_finalize(stmt);  
+  sqlite3_close(m_db);
 }
 
 
