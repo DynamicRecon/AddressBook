@@ -95,5 +95,18 @@ void ContactLoc::Delete()
 
 void ContactLoc::Search()
 {
-
+  DataLayer search_dl(m_db_path);
+  char address[500];
+  char city[100];
+  char state[100];
+  char zip[100];
+  search_dl.search_contact_loc(m_contact_id, address, city, state, zip);
+  std::string str_address(address);
+  std::string str_city(city);
+  std::string str_state(state);
+  std::string str_zip(zip);
+  m_address = str_address;
+  m_city = str_city;
+  m_state = str_state;
+  m_zip = str_zip;
 }

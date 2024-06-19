@@ -73,5 +73,16 @@ void ContactInfo::Delete()
 
 void ContactInfo::Search()
 {
-
+  DataLayer search_dl(m_db_path);
+  char name[100];
+  strcpy(name, m_name.c_str());
+  char email[500];
+  char phone[500];
+  int contact_id;
+  search_dl.search_contact_info(name, contact_id, email, phone);
+  std::string str_email(email);
+  std::string str_phone(phone);
+  m_email = str_email;
+  m_phone_number = str_phone;
+  set_contact_id(contact_id);
 }

@@ -22,8 +22,8 @@ public:
   void update_contact_loc(int contact_id, char *address, char *city, char *state, char *zip);
   void delete_contact_info(char *name);
   void delete_contact_loc(int contact_id);
-  void search_contact_info(char *name);
-  void search_contact_loc(int contact_id);
+  void search_contact_info(char *name, int &contact_id, char *email, char *phone);
+  void search_contact_loc(int contact_id, char *address, char *city, char *state, char *zip);
 private:
   std::string m_path;
   int m_last_row_id;

@@ -233,14 +233,76 @@ void DataLayer::delete_contact_loc(int contact_id)
 
 }
 
-
-
-void DataLayer::search_contact_info(char *name)
+void DataLayer::search_contact_info(char *name, int &contact_id, char *email, char *phone)
 {
-  
+  sqlite3_stmt *stmt;
+  const char *sql = "SELECT ID, EMAIL, PHONENUMBER FROM ContactInfo WHERE NAME = ?;";
+  m_fail = sqlite3_open(m_path.c_str(), &m_db);
+  m_opened = true;
+  if (m_fail)
+  {
+    m_opened = false;
+    return;
+  } 
+
+  m_fail = sqlite3_prepare_v2(m_db, sql, -1, &stmt, NULL);
+  if(m_fail != SQLITE_OK)
+  {
+    fprintf(stderr, "Error preparing search for contact info: %s\n", sqlite3_errmsg(m_db));
+    return;
+  } 
+
+  m_fail = sqlite3_bind_text(stmt, 1, name, strlen(name), NULL);
+  if(m_fail != SQLITE_OK)
+  {
+    fprintf(stderr, "Error binding name: %s\n", sqlite3_errmsg(m_db));
+    return;
+  } 
+
+  m_fail = sqlite3_step(stmt);
+  if(m_fail == SQLITE_ROW)
+  {
+    contact_id = sqlite3_column_int(stmt, 0);
+    strcpy(email, (char*)sqlite3_column_text(stmt, 1));
+    strcpy(phone, (char*)sqlite3_column_text(stmt, 2));
+  }
+  sqlite3_finalize(stmt);
+  sqlite3_close(m_db);
 }
 
-void DataLayer::search_contact_loc(int contact_id)
+void DataLayer::search_contact_loc(int contact_id, char *address, char *city, char *state, char *zip)
 {
+  sqlite3_stmt *stmt;
+  const char *sql = "SELECT ADDRESS, CITY, STATE, ZIP FROM ContactLoc WHERE CONTACT_ID = ?;";
+  m_fail = sqlite3_open(m_path.c_str(), &m_db);
+  m_opened = true;
+  if (m_fail)
+  {
+    m_opened = false;
+    return;
+  } 
 
+  m_fail = sqlite3_prepare_v2(m_db, sql, -1, &stmt, NULL);
+  if(m_fail != SQLITE_OK)
+  {
+    fprintf(stderr, "Error preparing search for contact location: %s\n", sqlite3_errmsg(m_db));
+    return;
+  } 
+
+  m_fail = sqlite3_bind_int(stmt, 1, contact_id);
+  if(m_fail != SQLITE_OK)
+  {
+    fprintf(stderr, "Error binding contact_id: %s\n", sqlite3_errmsg(m_db));
+    return;
+  } 
+  m_fail = sqlite3_step(stmt);
+  if(m_fail == SQLITE_ROW)
+  {
+    strcpy(address, (char*)sqlite3_column_text(stmt, 0));
+    strcpy(city, (char*)sqlite3_column_text(stmt, 1));
+    strcpy(state, (char*)sqlite3_column_text(stmt, 2));
+    strcpy(zip, (char*)sqlite3_column_text(stmt, 3));
+  }
+  sqlite3_finalize(stmt);
+  sqlite3_close(m_db);
 }
