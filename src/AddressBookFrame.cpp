@@ -10,7 +10,7 @@ AddressBookFrame::AddressBookFrame(const wxString& title)
   wxPanel *form_panel = new wxPanel(this, wxID_ANY);
   
   //name
-  m_lbl_name = new wxStaticText(form_panel, wxID_ANY, _("Name:"), wxDefaultPosition, wxSize(10,20));
+  m_lbl_name = new wxStaticText(form_panel, wxID_ANY, _("Name (enter search here):"), wxDefaultPosition, wxSize(10,20));
   m_txt_name = new wxTextCtrl(form_panel, wxID_ANY);
   m_main_sizer->Add(m_lbl_name, 0, wxALL|wxEXPAND);
   m_main_sizer->Add(m_txt_name, 0, wxALL|wxEXPAND);
@@ -64,6 +64,12 @@ AddressBookFrame::AddressBookFrame(const wxString& title)
   m_btn_delete = new wxButton(form_panel, DELETE, _("Delete"));
   m_main_sizer->Add(m_btn_update, 0, wxALL|wxEXPAND);
   m_main_sizer->Add(m_btn_delete, 0, wxALL|wxEXPAND);
+
+  //Update and Delete Buttons
+  m_btn_clear = new wxButton(form_panel, CLEAR, _("Clear"));
+  m_btn_exit = new wxButton(form_panel, wxID_EXIT, _("Exit"));
+  m_main_sizer->Add(m_btn_clear, 0, wxALL|wxEXPAND);
+  m_main_sizer->Add(m_btn_exit, 0, wxALL|wxEXPAND);
   
   wxString str_path;
   m_ini = new wxConfig(_("AddressBook"));
@@ -109,6 +115,14 @@ void AddressBookFrame::Clear()
   m_txt_city->Clear();
   m_txt_state->Clear();
   m_txt_zip->Clear();
+}
+
+void AddressBookFrame::Reset()
+{
+  m_btn_add->Enable(true);
+  m_btn_search->Enable(true);
+  m_btn_update->Enable(false);
+  m_btn_delete->Enable(false);
 }
 
 void AddressBookFrame::OnAdd(wxCommandEvent& event) 
@@ -188,7 +202,20 @@ void AddressBookFrame::OnSearch(wxCommandEvent& event)
    wxString zip(loc.get_zip());
    m_txt_zip->WriteText(zip);
   }
+   m_btn_add->Enable(false);
+   m_btn_update->Enable(true);
+   m_btn_delete->Enable(true);
+}
 
+void AddressBookFrame::OnClear(wxCommandEvent& event)
+{
+  Clear();
+  Reset();
+}
+
+void AddressBookFrame::OnExit(wxCommandEvent& event)
+{
+  Close();
 }
 
 wxBEGIN_EVENT_TABLE(AddressBookFrame, wxFrame)
@@ -196,4 +223,6 @@ wxBEGIN_EVENT_TABLE(AddressBookFrame, wxFrame)
   EVT_BUTTON(SEARCH, AddressBookFrame::OnSearch)
   EVT_BUTTON(UPDATE, AddressBookFrame::OnUpdate)
   EVT_BUTTON(DELETE, AddressBookFrame::OnDelete)
+  EVT_BUTTON(CLEAR, AddressBookFrame::OnClear)
+  EVT_BUTTON(wxID_EXIT, AddressBookFrame::OnExit)
 wxEND_EVENT_TABLE()

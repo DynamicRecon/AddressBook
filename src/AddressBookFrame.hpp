@@ -20,7 +20,8 @@ enum
   ADD = 100,
   SEARCH,
   UPDATE,
-  DELETE
+  DELETE,
+  CLEAR
 };
 
 class AddressBookFrame : public wxFrame
@@ -51,13 +52,19 @@ private:
   wxButton *m_btn_update;
   wxButton *m_btn_delete;
   wxButton *m_btn_search;
+  wxButton *m_btn_clear;
+  wxButton *m_btn_exit;
 
   wxString m_db_path;
   void Clear();
+  void Reset();
   void OnAdd(wxCommandEvent& event);
   void OnUpdate(wxCommandEvent& event);
   void OnDelete(wxCommandEvent& event);
   void OnSearch(wxCommandEvent& event);
+  void OnClear(wxCommandEvent& event);
+  void OnExit(wxCommandEvent& event);
+
   wxDECLARE_EVENT_TABLE();
 };
 
