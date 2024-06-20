@@ -2,6 +2,7 @@
 #define ADDRESSBOOKFRAME_HPP
 
 #include<iostream>
+#include<memory>
 
 #include <wx/wx.h>
 #include <wx/config.h>
@@ -56,6 +57,9 @@ private:
   wxButton *m_btn_exit;
 
   wxString m_db_path;
+  std::unique_ptr<ContactInfo> m_info;
+  std::unique_ptr<ContactLoc> m_loc;
+
   void Clear();
   void Reset();
   void OnAdd(wxCommandEvent& event);

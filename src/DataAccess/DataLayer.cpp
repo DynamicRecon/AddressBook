@@ -18,7 +18,7 @@ bool DataLayer::is_opened()
   return m_opened;
 }
 
-int DataLayer::get_last_row_id()
+int DataLayer::get_last_row_id(char *name)
 {
   return m_last_row_id;
 }
@@ -139,7 +139,6 @@ void DataLayer::insert_contact_info(char *name, char* email, char *phonenum)
 
   m_last_row_id = sqlite3_last_insert_rowid(m_db);
 
-
   sqlite3_finalize(stmt);  
   sqlite3_close(m_db);
 }
@@ -214,12 +213,124 @@ void DataLayer::insert_contact_loc(int contact_id, char *address, char *city, ch
 
 void DataLayer::update_contact_info(char *name, char* email, char *phonenum)
 {
+  sqlite3_stmt *stmt;
+  sqlite3_stmt *updated_row_stmt;
+  int id;
+  const char *sql = "UPDATE ContactInfo SET EMAIL = ?, PHONENUMBER = ? WHERE NAME = ?";
+  m_fail = sqlite3_open(m_path.c_str(), &m_db);
+  m_opened = true;
+  if (m_fail)
+  {
+    m_opened = false;
+    return;
+  } 
+  
+  m_fail = sqlite3_prepare_v2(m_db, sql, -1, &stmt, NULL);
+  if(m_fail != SQLITE_OK)
+  {
+    fprintf(stderr, "Error preparing update contact info: %s\n", sqlite3_errmsg(m_db));
+    return;
+  }
 
+  m_fail = sqlite3_bind_text(stmt, 1, email, strlen(email), NULL);
+  if(m_fail != SQLITE_OK)
+  {
+    fprintf(stderr, "Error binding email: %s\n", sqlite3_errmsg(m_db));
+    return;
+  }
+
+  m_fail = sqlite3_bind_text(stmt, 2, phonenum, strlen(phonenum), NULL);
+  if(m_fail != SQLITE_OK)
+  {
+    fprintf(stderr, "Error binding phone number: %s\n", sqlite3_errmsg(m_db));
+    return;
+  }
+
+  m_fail = sqlite3_bind_text(stmt, 3, name, strlen(name), NULL);
+  if(m_fail != SQLITE_OK)
+  {
+    fprintf(stderr, "Error binding name: %s\n", sqlite3_errmsg(m_db));
+    return;
+  }
+
+  m_fail = sqlite3_step(stmt);
+  if(m_fail != SQLITE_DONE)
+  {
+    fprintf(stderr, "Update of contact information did not finish: %s\n", sqlite3_errmsg(m_db));
+    return;
+  }
+
+  
+   
+  sqlite3_finalize(stmt);
+  sqlite3_close(m_db);
 }
 
 void DataLayer::update_contact_loc(int contact_id, char *address, char *city, char *state, char *zip)
 {
+   sqlite3_stmt *stmt;
+  int id;
+  const char *sql = "UPDATE ContactLoc SET ADDRESS = ?, CITY = ?, STATE = ?, ZIP = ? WHERE CONTACT_ID = ?;";
+  m_fail = sqlite3_open(m_path.c_str(), &m_db);
+  m_opened = true;
+  if (m_fail)
+  {
+    m_opened = false;
+    return;
+  }
 
+  m_fail = sqlite3_prepare_v2(m_db, sql, -1, &stmt, NULL);
+  if(m_fail != SQLITE_OK)
+  {
+    fprintf(stderr, "Error preparing to update contact location: %s\n", sqlite3_errmsg(m_db));
+    return;
+  } 
+
+  
+  m_fail = sqlite3_bind_text(stmt, 1, address, strlen(address), NULL);
+  if(m_fail != SQLITE_OK)
+  {
+    fprintf(stderr, "Error binding address: %s\n", sqlite3_errmsg(m_db));
+    return;
+  }
+  
+  m_fail = sqlite3_bind_text(stmt, 2, city, strlen(city), NULL);
+  if(m_fail != SQLITE_OK)
+  {
+    fprintf(stderr, "Error binding city: %s\n", sqlite3_errmsg(m_db));
+    return;
+  }
+
+  m_fail = sqlite3_bind_text(stmt, 3, state, strlen(state), NULL);
+  if(m_fail != SQLITE_OK)
+  {
+    fprintf(stderr, "Error binding state: %s\n", sqlite3_errmsg(m_db));
+    return;
+  }
+
+  m_fail = sqlite3_bind_text(stmt, 4, zip, strlen(zip), NULL);
+  if(m_fail != SQLITE_OK)
+  {
+    fprintf(stderr, "Error binding zip: %s\n", sqlite3_errmsg(m_db));
+    return;
+  }
+
+  m_fail = sqlite3_bind_int(stmt, 5, contact_id);
+  if(m_fail != SQLITE_OK)
+  {
+    fprintf(stderr, "Error binding contact_id: %s\n", sqlite3_errmsg(m_db));
+    return;
+  }
+
+  m_fail = sqlite3_step(stmt);
+  if(m_fail != SQLITE_DONE)
+  {
+    fprintf(stderr, "Update of contact location did not finish: %s\n", sqlite3_errmsg(m_db));
+    return;
+  }
+
+  sqlite3_finalize(stmt);  
+  sqlite3_close(m_db);
 }
 
 

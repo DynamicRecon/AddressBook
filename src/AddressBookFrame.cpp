@@ -93,6 +93,12 @@ AddressBookFrame::AddressBookFrame(const wxString& title)
   //create database.
   DataLayer m_dl_create(m_db_path.ToStdString());
   m_dl_create.create_db_contacts();
+
+  //Load Contact Data Models.
+  m_info = std::make_unique<ContactInfo>(m_db_path.ToStdString());
+  m_loc = std::make_unique<ContactLoc>(m_db_path.ToStdString());
+
+  //delete settings object.
   delete m_ini;
   
   m_btn_update->Enable(false);
@@ -102,6 +108,8 @@ AddressBookFrame::AddressBookFrame(const wxString& title)
   
   Layout();
 }
+
+
 
 
 //private methods
@@ -128,80 +136,81 @@ void AddressBookFrame::Reset()
 void AddressBookFrame::OnAdd(wxCommandEvent& event) 
 {
   
-  ContactInfo info(m_db_path.ToStdString());
-  info.set_name(m_txt_name->GetValue().ToStdString());
-  info.set_email(m_txt_email->GetValue().ToStdString());
-  info.set_phone_number(m_txt_phone->GetValue().ToStdString());  
-  info.Add();
+  m_info->set_name(m_txt_name->GetValue().ToStdString());
+  m_info->set_email(m_txt_email->GetValue().ToStdString());
+  m_info->set_phone_number(m_txt_phone->GetValue().ToStdString());  
+  m_info->Add();
 
-  ContactLoc loc(m_db_path.ToStdString());
-  loc.set_contact_id(info.get_contact_id());
-  loc.set_address(m_txt_address->GetValue().ToStdString());
-  loc.set_city(m_txt_city->GetValue().ToStdString());
-  loc.set_state(m_txt_state->GetValue().ToStdString());
-  loc.set_zip(m_txt_zip->GetValue().ToStdString());
-  loc.Add();
+  
+  m_loc->set_contact_id(m_info->get_contact_id());
+  m_loc->set_address(m_txt_address->GetValue().ToStdString());
+  m_loc->set_city(m_txt_city->GetValue().ToStdString());
+  m_loc->set_state(m_txt_state->GetValue().ToStdString());
+  m_loc->set_zip(m_txt_zip->GetValue().ToStdString());
+  m_loc->Add();
   
    Clear();
 }
 
 void AddressBookFrame::OnUpdate(wxCommandEvent& event) 
 {
-  ContactInfo info(m_db_path.ToStdString());
-  info.set_name(m_txt_name->GetValue().ToStdString());
-  info.set_email(m_txt_email->GetValue().ToStdString());
-  info.set_phone_number(m_txt_phone->GetValue().ToStdString());  
-  info.Update();
+  m_info->set_name(m_txt_name->GetValue().ToStdString());
+  m_info->set_email(m_txt_email->GetValue().ToStdString());
+  m_info->set_phone_number(m_txt_phone->GetValue().ToStdString());  
+  m_info->Update();
 
-  ContactLoc loc(m_db_path.ToStdString());
-  loc.set_contact_id(info.get_contact_id());
-  loc.set_address(m_txt_address->GetValue().ToStdString());
-  loc.set_city(m_txt_city->GetValue().ToStdString());
-  loc.set_state(m_txt_state->GetValue().ToStdString());
-  loc.set_zip(m_txt_zip->GetValue().ToStdString());
-  loc.Update();
+  
+  m_loc->set_contact_id(m_info->get_contact_id());
+  m_loc->set_address(m_txt_address->GetValue().ToStdString());
+  m_loc->set_city(m_txt_city->GetValue().ToStdString());
+  m_loc->set_state(m_txt_state->GetValue().ToStdString());
+  m_loc->set_zip(m_txt_zip->GetValue().ToStdString());
+  m_loc->Update();
 
   Clear();
+  Reset();
 }
 
 void AddressBookFrame::OnDelete(wxCommandEvent& event) 
 {
-  ContactInfo info(m_db_path.ToStdString());
-  info.set_name(m_txt_name->GetValue().ToStdString());  
-  info.Delete();
+  
+  m_info->set_name(m_txt_name->GetValue().ToStdString());  
+  m_info->Delete();
 
-  ContactLoc loc(m_db_path.ToStdString());
-  loc.set_contact_id(info.get_contact_id());
-  loc.Delete();
+  
+  m_loc->set_contact_id(m_info->get_contact_id());
+  m_loc->Delete();
 
   Clear();
+  Reset();
 }
 
 void AddressBookFrame::OnSearch(wxCommandEvent& event) 
 {
-  ContactInfo info(m_db_path.ToStdString());
-  info.set_name(m_txt_name->GetValue().ToStdString());  
-  info.Search();
+  
+  m_info->set_name(m_txt_name->GetValue().ToStdString());  
+  m_info->Search();
 
-  ContactLoc loc(m_db_path.ToStdString());
-  loc.set_contact_id(info.get_contact_id());
-  loc.Search();
+ 
+  m_loc->set_contact_id(m_info->get_contact_id());
+  m_loc->Search();
 
-  if(info.get_contact_id() > 0)
+  if(m_info->get_contact_id() > 0)
   {
-   wxString email(info.get_email());
+   wxString email(m_info->get_email());
    m_txt_email->WriteText(email);
-   wxString phonenum(info.get_phone_number());
+   wxString phonenum(m_info->get_phone_number());
    m_txt_phone->WriteText(phonenum);
-   wxString address(loc.get_address());
+   wxString address(m_loc->get_address());
    m_txt_address->WriteText(address);
-   wxString city(loc.get_city());
+   wxString city(m_loc->get_city());
    m_txt_city->WriteText(city);
-   wxString state(loc.get_state());
+   wxString state(m_loc->get_state());
    m_txt_state->WriteText(state);
-   wxString zip(loc.get_zip());
+   wxString zip(m_loc->get_zip());
    m_txt_zip->WriteText(zip);
   }
+
    m_btn_add->Enable(false);
    m_btn_update->Enable(true);
    m_btn_delete->Enable(true);

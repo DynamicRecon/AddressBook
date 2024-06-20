@@ -14,7 +14,7 @@ public:
   ~DataLayer();
   bool is_opened();
   std::string get_errors();
-  int get_last_row_id();
+  int get_last_row_id(char *name);
   void create_db_contacts();
   void insert_contact_info(char *name, char* email, char *phonenum);
   void insert_contact_loc(int contact_id, char *address, char *city, char *state, char *zip);

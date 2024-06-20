@@ -58,12 +58,19 @@ void ContactInfo::Add()
   char phone[500];
   strcpy(phone, m_phone_number.c_str());
   add_dl.insert_contact_info(name, email, phone);
-  set_contact_id(add_dl.get_last_row_id());
+  set_contact_id(add_dl.get_last_row_id(name));
 }
 
 void ContactInfo::Update()
 {
-
+  DataLayer update_dl(m_db_path);
+  char name[100];
+  strcpy(name, m_name.c_str());
+  char email[500]; 
+  strcpy(email, m_email.c_str());
+  char phone[500];
+  strcpy(phone, m_phone_number.c_str());
+  update_dl.update_contact_info(name, email, phone);
 }
 
 void ContactInfo::Delete()
@@ -84,5 +91,5 @@ void ContactInfo::Search()
   std::string str_phone(phone);
   m_email = str_email;
   m_phone_number = str_phone;
-  set_contact_id(contact_id);
+  m_contact_id = contact_id;
 }

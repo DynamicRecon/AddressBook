@@ -80,12 +80,20 @@ void ContactLoc::Add()
   char zip[100];
   strcpy(zip, m_zip.c_str());
   add_dl.insert_contact_loc(m_contact_id, address, city, state, zip);
-  m_location_id = add_dl.get_last_row_id();
 }
 
 void ContactLoc::Update()
 {
-
+  DataLayer update_dl(m_db_path);
+  char address[500];
+  strcpy(address, m_address.c_str());
+  char city[100];
+  strcpy(city, m_city.c_str());
+  char state[100];
+  strcpy(state, m_state.c_str());
+  char zip[100];
+  strcpy(zip, m_zip.c_str());
+  update_dl.update_contact_loc(m_contact_id, address, city, state, zip);
 }
 
 void ContactLoc::Delete()
