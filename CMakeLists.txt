@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.24)
-project(AddressBook VERSION 0.0.1)
+project(AddressBook VERSION 1.0.1)
 
 set(wxBUILD_SHARED OFF)
 option(with-qt ON)

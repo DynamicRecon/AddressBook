@@ -415,7 +415,7 @@ void DataLayer::delete_contact_loc(int contact_id)
 void DataLayer::search_contact_info(char *name, int &contact_id, char *email, char *phone)
 {
   sqlite3_stmt *stmt;
-  const char *sql = "SELECT ID, EMAIL, PHONENUMBER FROM ContactInfo WHERE NAME = ?;";
+  const char *sql = "SELECT ID, NAME, EMAIL, PHONENUMBER FROM ContactInfo WHERE UPPER(NAME) = UPPER(?);";
   m_fail = sqlite3_open(m_path.c_str(), &m_db);
   m_opened = true;
   if (m_fail)
@@ -442,8 +442,8 @@ void DataLayer::search_contact_info(char *name, int &contact_id, char *email, ch
   if(m_fail == SQLITE_ROW)
   {
     contact_id = sqlite3_column_int(stmt, 0);
-    strcpy(email, (char*)sqlite3_column_text(stmt, 1));
-    strcpy(phone, (char*)sqlite3_column_text(stmt, 2));
+    strcpy(email, (char*)sqlite3_column_text(stmt, 2));
+    strcpy(phone, (char*)sqlite3_column_text(stmt, 3));
   }
   sqlite3_finalize(stmt);
   sqlite3_close(m_db);

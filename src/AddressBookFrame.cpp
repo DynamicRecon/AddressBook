@@ -197,18 +197,21 @@ void AddressBookFrame::OnSearch(wxCommandEvent& event)
 
   if(m_info->get_contact_id() > 0)
   {
-   wxString email(m_info->get_email());
-   m_txt_email->WriteText(email);
-   wxString phonenum(m_info->get_phone_number());
-   m_txt_phone->WriteText(phonenum);
-   wxString address(m_loc->get_address());
-   m_txt_address->WriteText(address);
-   wxString city(m_loc->get_city());
-   m_txt_city->WriteText(city);
-   wxString state(m_loc->get_state());
-   m_txt_state->WriteText(state);
-   wxString zip(m_loc->get_zip());
-   m_txt_zip->WriteText(zip);
+    wxString email(m_info->get_email());
+    m_txt_email->SetValue(email);
+    wxString phonenum(m_info->get_phone_number());
+    m_txt_phone->SetValue(phonenum);
+    wxString address(m_loc->get_address());
+    m_txt_address->SetValue(address);
+    wxString city(m_loc->get_city());
+    m_txt_city->SetValue(city);
+    wxString state(m_loc->get_state());
+    m_txt_state->SetValue(state);
+    wxString zip(m_loc->get_zip());
+    m_txt_zip->SetValue(zip);
+  } else {
+    Clear();
+    Reset();
   }
 
    m_btn_add->Enable(false);
