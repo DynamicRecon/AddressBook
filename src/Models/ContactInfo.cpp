@@ -75,7 +75,10 @@ void ContactInfo::Update()
 
 void ContactInfo::Delete()
 {
-
+  DataLayer delete_dl(m_db_path);
+  char name[100];
+  strcpy(name, m_name.c_str());
+  delete_dl.delete_contact_info(name);
 }
 
 void ContactInfo::Search()

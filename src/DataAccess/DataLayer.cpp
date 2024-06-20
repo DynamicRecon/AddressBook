@@ -336,12 +336,80 @@ void DataLayer::update_contact_loc(int contact_id, char *address, char *city, ch
 
 void DataLayer::delete_contact_info(char *name)
 {
+  sqlite3_stmt *stmt;
+  sqlite3_stmt *updated_row_stmt;
+  int id;
+  const char *sql = "DELETE FROM ContactInfo WHERE NAME = ?";
+  m_fail = sqlite3_open(m_path.c_str(), &m_db);
+  m_opened = true;
+  if (m_fail)
+  {
+    m_opened = false;
+    return;
+  }
 
+  m_fail = sqlite3_prepare_v2(m_db, sql, -1, &stmt, NULL);
+  if(m_fail != SQLITE_OK)
+  {
+    fprintf(stderr, "Error preparing delete ContactInfo: %s\n", sqlite3_errmsg(m_db));
+    return;
+  }
+
+  m_fail = sqlite3_bind_text(stmt, 1, name, strlen(name), NULL);
+  if(m_fail != SQLITE_OK)
+  {
+    fprintf(stderr, "Error binding name for delete of ContactInfo: %s\n", sqlite3_errmsg(m_db));
+    return;
+  }
+
+  m_fail = sqlite3_step(stmt);
+  if(m_fail != SQLITE_DONE)
+  {
+    fprintf(stderr, "Delete of ContactInfo did not finish: %s\n", sqlite3_errmsg(m_db));
+    return;
+  }
+
+  sqlite3_finalize(stmt);  
+  sqlite3_close(m_db);
 }
 
 void DataLayer::delete_contact_loc(int contact_id)
 {
+  sqlite3_stmt *stmt;
+  sqlite3_stmt *updated_row_stmt;
+  int id;
+  const char *sql = "DELETE FROM ContactLoc WHERE CONTACT_ID = ?";
+  m_fail = sqlite3_open(m_path.c_str(), &m_db);
+  m_opened = true;
+  if (m_fail)
+  {
+    m_opened = false;
+    return;
+  }
 
+  m_fail = sqlite3_prepare_v2(m_db, sql, -1, &stmt, NULL);
+  if(m_fail != SQLITE_OK)
+  {
+    fprintf(stderr, "Error preparing delete ContactLoc: %s\n", sqlite3_errmsg(m_db));
+    return;
+  }
+  
+  m_fail = sqlite3_bind_int(stmt, 1, contact_id);
+  if(m_fail != SQLITE_OK)
+  {
+    fprintf(stderr, "Error binding contact_id: %s\n", sqlite3_errmsg(m_db));
+    return;
+  }
+
+  m_fail = sqlite3_step(stmt);
+  if(m_fail != SQLITE_DONE)
+  {
+    fprintf(stderr, "Delete of ContactInfo did not finish: %s\n", sqlite3_errmsg(m_db));
+    return;
+  }
+
+  sqlite3_finalize(stmt);  
+  sqlite3_close(m_db);
 }
 
 void DataLayer::search_contact_info(char *name, int &contact_id, char *email, char *phone)

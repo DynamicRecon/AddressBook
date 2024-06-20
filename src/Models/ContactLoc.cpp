@@ -98,7 +98,8 @@ void ContactLoc::Update()
 
 void ContactLoc::Delete()
 {
-
+  DataLayer delete_dl(m_db_path);
+  delete_dl.delete_contact_loc(m_contact_id);
 }
 
 void ContactLoc::Search()
